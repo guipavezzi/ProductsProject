@@ -25,7 +25,6 @@ namespace ProductProject.API.Controllers
             return Ok(await _productService.GetProductServiceAsync(id));
         }
         [HttpPost]
-        [Route("{id}")]
         public async Task<IActionResult> PostProduct([FromBody] RequestProductRegister model)
         {
             return Created(string.Empty, await _productService.PostProductsServiceAsync(model));
