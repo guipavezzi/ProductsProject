@@ -22,6 +22,13 @@ var database = Environment.GetEnvironmentVariable("DATABASE");
 var username = Environment.GetEnvironmentVariable("USERNAME");
 var password = Environment.GetEnvironmentVariable("PASSWORD");
 
+
+Console.WriteLine("Host: " + host);
+Console.WriteLine("port: " + port);
+Console.WriteLine("database: " + database);
+Console.WriteLine("username: " + username);
+Console.WriteLine("password: " + password);
+
 // Construindo a string de conexão
 if (!string.IsNullOrEmpty(host) &&
     !string.IsNullOrEmpty(port) &&
