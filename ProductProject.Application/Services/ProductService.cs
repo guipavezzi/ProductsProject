@@ -18,10 +18,7 @@ namespace ProductProject.Application.Services
         public async Task<ResponseJson> DeleteProductsServiceAsync(int id)
         {
             var productToRemove = await _productRepository.GetProductAsync(id);
-            var value = await _productRepository.DeleteProductAsync(productToRemove);
-            if(value is not null)
-                throw new ProductProjectException("Produto não foi removido");
-            
+            await _productRepository.DeleteProductAsync(productToRemove);
             return new ResponseJson("Produto removido com sucesso");
         }
 
@@ -65,9 +62,16 @@ namespace ProductProject.Application.Services
 
         public async Task<ResponseJson> PutProductsServiceAsync(Product model)
         {
-            await _productRepository.PutProductAsync(model);
-            if(model.Equals(model))
+            var productToPut = await _productRepository.GetProductAsync(model.Id);
+
+            productToPut.Name = model.Name;
+            productToPut.Description = model.Description;
+            productToPut.Price = model.Price;
+
+            if(productToPut.Equals(model))
                 throw new ProductProjectException("Produto não alterado");
+
+            await _productRepository.PutProductAsync(productToPut);
 
             return new ResponseJson("Produto Alterado com Sucesso");
             

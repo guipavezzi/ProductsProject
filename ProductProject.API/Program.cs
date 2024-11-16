@@ -7,7 +7,6 @@ using ProductProject.Infrastructure.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
@@ -15,48 +14,51 @@ builder.Services.AddSwaggerGen(c => {
 });
 builder.Services.AddRouting(opt => opt.LowercaseUrls = true);
 
-// Lendo variáveis de ambiente do Railway
-var host = Environment.GetEnvironmentVariable("HOST");
-var port = Environment.GetEnvironmentVariable("PORT");
-var database = Environment.GetEnvironmentVariable("DATABASE");
-var username = Environment.GetEnvironmentVariable("USERNAME");
-var password = Environment.GetEnvironmentVariable("PASSWORD");
-
-
-Console.WriteLine("Host: " + host);
-Console.WriteLine("port: " + port);
-Console.WriteLine("database: " + database);
-Console.WriteLine("username: " + username);
-Console.WriteLine("password: " + password);
-
-// Construindo a string de conexão
-if (!string.IsNullOrEmpty(host) &&
-    !string.IsNullOrEmpty(port) &&
-    !string.IsNullOrEmpty(database) &&
-    !string.IsNullOrEmpty(username) &&
-    !string.IsNullOrEmpty(password))
+if (builder.Environment.IsProduction())
 {
-    var connectionString = $"Host={host};" +
-                           $"Port={port};" +
-                           $"Database={database};" +
-                           $"Username={username};" +
-                           $"Password={password};" +
-                           "SSL Mode=Require;Trust Server Certificate=true";
+    var host = Environment.GetEnvironmentVariable("HOST");
+    var port = Environment.GetEnvironmentVariable("PORT");
+    var database = Environment.GetEnvironmentVariable("DATABASE");
+    var username = Environment.GetEnvironmentVariable("USERNAME");
+    var password = Environment.GetEnvironmentVariable("PASSWORD");
 
-    builder.Services.AddDbContext<ProductContext>(opt => opt.UseNpgsql(connectionString));
+    Console.WriteLine("Host: " + host);
+    Console.WriteLine("Port: " + port);
+    Console.WriteLine("Database: " + database);
+    Console.WriteLine("Username: " + username);
+
+    if (!string.IsNullOrEmpty(host) &&
+        !string.IsNullOrEmpty(port) &&
+        !string.IsNullOrEmpty(database) &&
+        !string.IsNullOrEmpty(username) &&
+        !string.IsNullOrEmpty(password))
+    {
+        var connectionString = $"Host={host};" +
+                               $"Port={port};" +
+                               $"Database={database};" +
+                               $"Username={username};" +
+                               $"Password={password};" +
+                               "SSL Mode=Require;Trust Server Certificate=true";
+
+        builder.Services.AddDbContext<ProductContext>(opt => opt.UseNpgsql(connectionString));
+    }
+    else
+    {
+        throw new Exception("As variáveis de ambiente necessárias não estão configuradas.");
+    }
 }
 else
 {
-    throw new Exception("As variáveis de ambiente necessárias não estão configuradas.");
+    Console.WriteLine("Usando configuração local (appsettings.json)");
+    var connectionString = builder.Configuration.GetConnectionString("ProductConnection");
+    builder.Services.AddDbContext<ProductContext>(opt => opt.UseNpgsql(connectionString));
 }
 
-// Registrando serviços
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 var app = builder.Build();
 
-// Configuração do Swagger
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();

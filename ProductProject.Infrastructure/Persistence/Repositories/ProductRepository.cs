@@ -21,7 +21,7 @@ namespace ProductProject.Infrastructure.Persistence.Repositories
 
         public async Task<Product> GetProductAsync(int id)
         {
-            return await _context.Products.FindAsync(id);
+            return await _context.Products.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<List<Product>> GetProductsAsync()
