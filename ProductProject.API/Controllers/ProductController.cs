@@ -36,7 +36,7 @@ namespace ProductProject.API.Controllers
         }
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct([FromRoute] int id)
         {
             return Ok(await _productService.DeleteProductsServiceAsync(id));
         }
