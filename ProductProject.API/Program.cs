@@ -14,6 +14,15 @@ builder.Services.AddSwaggerGen(c => {
 });
 builder.Services.AddRouting(opt => opt.LowercaseUrls = true);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
 if (builder.Environment.IsProduction())
 {
     var host = Environment.GetEnvironmentVariable("HOST");
@@ -68,6 +77,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         c.RoutePrefix = string.Empty;
     });
 }
+
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
