@@ -20,7 +20,7 @@ Foi utilizado o .NET 6 no desenvolvimento do projeto.
 #### Criação de um projeto novo
 $ dotnet new webapi 
 
-#### Criação de novas projetos de clasess
+#### Criação de novos projetos de clasess
 $ dotnet new classlib
 
 ### Inicialização do projeto
